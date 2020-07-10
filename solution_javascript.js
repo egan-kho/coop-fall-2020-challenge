@@ -41,13 +41,13 @@ class EventSourcer {
   }
 
   add(num) {
-    this.undo_stack.push(num);
+    this.undo_stack.push(num); // save addition into undo stack
     this.value += num;
     this.redo_stack.pop(); // 'overwrite' the most recent redo
   }
 
   subtract(num) {
-    this.undo_stack.push(-num);
+    this.undo_stack.push(-num); // save subtraction into undo stack
     this.value -= num;
     this.redo_stack.pop(); // 'overwrite' the most recent redo
   }
@@ -55,16 +55,16 @@ class EventSourcer {
   // undo last action
   undo() {
     if (!this.undo_stack.isEmpty()) {
-      this.redo_stack.push(this.undo_stack.peek());
-      this.value -= this.undo_stack.pop();
+      this.redo_stack.push(this.undo_stack.peek()); // save undone action into redo stack
+      this.value -= this.undo_stack.pop(); // perform undo
     }
   }
 
   // redo last undone action
   redo() {
     if (!this.redo_stack.isEmpty()) {
-      this.undo_stack.push(this.redo_stack.peek());
-      this.value += this.redo_stack.pop();
+      this.undo_stack.push(this.redo_stack.peek()); // save redone action into undo stack
+      this.value += this.redo_stack.pop(); // perform redo
     }
   }
 
@@ -73,6 +73,8 @@ class EventSourcer {
     for (let i = 0; i < num; ++i) {
       if (!this.undo_stack.isEmpty()) {
         this.undo();
+      } else {
+        break; // if no more undos to perform, end
       }
     }
   }
@@ -82,12 +84,12 @@ class EventSourcer {
     for (let i = 0; i < num; ++i) {
       if (!this.redo_stack.isEmpty()) {
         this.redo();
+      } else {
+        break; // if no more redos to perform, end
       }
     }
   }
 }
-
-
 
 // ----- Do not modify anything below this line (needed for test suite) ------
 module.exports = EventSourcer;
